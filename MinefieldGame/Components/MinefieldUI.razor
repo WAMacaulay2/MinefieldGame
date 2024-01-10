@@ -9,7 +9,7 @@
                 @foreach (var cell in row)
                 {
                     <div class="@($"col border minefield-space-{Minefield.Difficulty.ToString().ToLower()}")">
-                        @if(cell.Revealed && cell.HasMine)
+                        @if(cell.Revealed)
                         {
                             @if (cell.HasMine)
                             {

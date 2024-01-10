@@ -23,6 +23,7 @@
 
         public MinefieldSpace[][] Field { get; set; }
         public Difficulty Difficulty { get; private set; }
+        public bool Mined { get; private set; }
 
         public int Rows
         {
@@ -112,6 +113,9 @@
 
         public void SetMines()
         {
+            if (Mined)
+                return;
+
             // Add all the mines.
             int setMines = 0;
             Random rng = new Random();
@@ -121,21 +125,62 @@
                 int y = rng.Next(0, Columns - 1);
 
                 var cell = Field[x][y];
-                // Don't re-mine the same space.
-                if (!cell.HasMine)
+                // Don't re-mine the same space or mine the first space the player clicked.
+                if (!cell.HasMine && !cell.Revealed)
                 {
                     cell.HasMine = true;
+                    cell.Revealed = true;// TODO: For debug, take this out eventually.
                     setMines++;
                 }
             }
+
+            // Set mine counts on empty spaces.
+            for(int i = 0; i < Rows; i++)
+            {
+                for(int j = 0; j < Columns; j++)
+                {
+                    var cell = Field[i][j];
+                    if(!cell.HasMine)
+                    {
+                        // Top-left space.
+                        if (i > 0 && j > 0 && Field[i - 1][j - 1].HasMine)
+                            cell.AdjacentMines++;
+                        // Top space.
+                        if (j > 0 && Field[i][j - 1].HasMine)
+                            cell.AdjacentMines++;
+                        // Top-right space.
+                        if (i < Rows - 1 && j > 0 && Field[i + 1][j - 1].HasMine)
+                            cell.AdjacentMines++;
+
+                        // Left space.
+                        if (i > 0 && Field[i - 1][j].HasMine)
+                            cell.AdjacentMines++;
+                        // Right space.
+                        if (i < Rows - 1 && Field[i + 1][j].HasMine)
+                            cell.AdjacentMines++;
+
+                        // Bottom-left space.
+                        if (i > 0 && j < Columns - 1 && Field[i - 1][j + 1].HasMine)
+                            cell.AdjacentMines++;
+                        // Bottom space.
+                        if (j < Columns - 1 && Field[i][j + 1].HasMine)
+                            cell.AdjacentMines++;
+                        // Bottom-right space.
+                        if (i < Rows - 1 && j < Columns - 1 && Field[i + 1][j + 1].HasMine)
+                            cell.AdjacentMines++;
+                    }
+                }
+            }
+
+            Mined = true;
         }
     }
 
     public class MinefieldSpace
     {
-        public bool Revealed { get; private set; } = true;
+        public bool Revealed { get; set; }
         public bool HasMine { get; set; }
-        public bool Flagged { get; private set; }
+        public bool Flagged { get; set; }
         public int AdjacentMines { get; set; }
     }
 }
