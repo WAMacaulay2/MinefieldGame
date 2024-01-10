@@ -8,8 +8,22 @@
             <div class="row">
                 @foreach (var cell in row)
                 {
-                    <div class="col border minefield-space-easy">
-
+                    <div class="@($"col border minefield-space-{Minefield.Difficulty.ToString().ToLower()}")">
+                        @if(cell.Revealed && cell.HasMine)
+                        {
+                            @if (cell.HasMine)
+                            {
+                                <MudIcon Icon="@MineIcon"/>
+                            }
+                            else if(cell.AdjacentMines > 0)
+                            {
+                                @cell.AdjacentMines
+                            }
+                        }
+                        else if(!cell.Revealed && cell.Flagged)
+                        {
+                            <MudIcon Icon="@FlagIcon"/>
+                        }
                     </div>
                 }
             </div>
@@ -18,7 +32,7 @@
 }
 
 @code {
-    private Difficulty Difficulty { get; set; }
+    private Difficulty DifficultySetting { get; set; }
     private Minefield Minefield { get; set; }
 
     private readonly string FlagIcon = Icons.Material.Filled.Flag;
@@ -27,6 +41,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Minefield = new Minefield(Difficulty);
+        Minefield = new Minefield(DifficultySetting);
+        Minefield.SetMines();
     }
 }
