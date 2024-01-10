@@ -1,0 +1,32 @@
+﻿<h3>Minefield UI</h3>
+
+@if(Minefield != null)
+{
+    <div class="container minefield">
+        @foreach(var row in Minefield.Field)
+        {
+            <div class="row">
+                @foreach (var cell in row)
+                {
+                    <div class="col border minefield-space-easy">
+
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private Difficulty Difficulty { get; set; }
+    private Minefield Minefield { get; set; }
+
+    private readonly string FlagIcon = Icons.Material.Filled.Flag;
+    private readonly string MineIcon = Icons.Material.Filled.BrightnessLow;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Minefield = new Minefield(Difficulty);
+    }
+}
