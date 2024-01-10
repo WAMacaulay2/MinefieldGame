@@ -3,14 +3,19 @@
 @if(Minefield != null)
 {
     <div class="container minefield">
-        @foreach(var row in Minefield.Field)
+        @for(int i = 0; i < Minefield.Rows; i++)
         {
+            var x = i;
+
             <div class="row">
-                @foreach (var cell in row)
+                @for(int j = 0; j < Minefield.Columns; j++)
                 {
+                    var y = j;
+                    var cell = Minefield.Field[x][y];
+
                     <div class="@($"col border minefield-space-{Minefield.Difficulty.ToString().ToLower()} minefield-space-{(cell.Revealed ? "revealed" : "hidden")}")"
-                         @onclick="() => RevealSpace(cell)"
-                         @oncontextmenu="() => FlagSpace(cell)" @oncontextmenu:preventDefault>
+                         @onclick="() => RevealSpace(x, y)"
+                         @oncontextmenu="() => FlagSpace(x, y)" @oncontextmenu:preventDefault>
                         @if(cell.Revealed)
                         {
                             @if (cell.HasMine)
@@ -44,18 +49,15 @@
     {
         base.OnInitialized();
         Minefield = new Minefield(DifficultySetting);
-        Minefield.SetMines();
     }
 
-    private void RevealSpace(MinefieldSpace space)
+    private void RevealSpace(int x, int y)
     {
-        space.Revealed = true;
-        Minefield.RevealSpaces();
+        Minefield.RevealSpace(x, y);
     }
 
-    private void FlagSpace(MinefieldSpace space)
+    private void FlagSpace(int x, int y)
     {
-        if (!space.Revealed)
-            space.Flagged = !space.Flagged;
+        Minefield.FlagSpace(x, y);
     }
 }

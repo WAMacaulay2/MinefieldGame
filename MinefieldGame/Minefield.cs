@@ -74,6 +74,8 @@
             }
         }
         public int FlaggedSpaces { get => Field.Sum(x => x.Sum(y => y.Flagged ? 1 : 0)); }
+        public int HiddenSpaces { get => Field.Sum(x => x.Sum(y => y.Revealed ? 0 : 1)); }
+        public int RemainingMines { get => TotalMines - FlaggedSpaces; }
 
         public Minefield(Difficulty difficulty)
         {
@@ -115,6 +117,9 @@
         {
             if (Mined)
                 return;
+
+            if (HiddenSpaces < TotalMines)
+                throw new Exception("Not enough spaces for mines.");
 
             // Add all the mines.
             int setMines = 0;
@@ -174,8 +179,51 @@
             Mined = true;
         }
 
-        public void RevealSpaces()
+        public void RevealSpace(int x, int y)
         {
+            var startingCell = Field[x][y];
+            // Don't reveal flagged spaces.
+            if(startingCell.Flagged)
+                return;
+
+            startingCell.Revealed = true;
+
+            // Mine the field if it hasn't been mined yet.
+            if(!Mined)
+            {
+                // Top-left space.
+                if (x > 0 && y > 0)
+                    Field[x - 1][y - 1].Revealed = true;
+                // Top space.
+                if (y > 0)
+                    Field[x][y - 1].Revealed = true;
+                // Top-right space.
+                if (x < Rows - 1 && y > 0)
+                    Field[x + 1][y - 1].Revealed = true;
+
+                // Left space.
+                if (x > 0)
+                    Field[x - 1][y].Revealed = true;
+                // Right space.
+                if (x < Rows - 1)
+                    Field[x + 1][y].Revealed = true;
+
+                // Bottom-left space.
+                if (x > 0 && y < Columns - 1)
+                    Field[x - 1][y + 1].Revealed = true;
+                // Bottom space.
+                if (y < Columns - 1)
+                    Field[x][y + 1].Revealed = true;
+                // Bottom-right space.
+                if (x < Rows - 1 && y < Columns - 1)
+                    Field[x + 1][y + 1].Revealed = true;
+                SetMines();
+            }
+            // No other spaces will be revealed if this isn't a blank space.
+            else if (startingCell.HasMine || startingCell.AdjacentMines > 0)
+                return;
+
+            // Reveal adjacent spaces.
             bool again = true;
             while(again)
             {
@@ -273,6 +321,13 @@
                     }
                 }
             }
+        }
+
+        public void FlagSpace(int x, int y)
+        {
+            var cell = Field[x][y];
+            if (!cell.Revealed)
+                cell.Flagged = !cell.Flagged;
         }
     }
 
