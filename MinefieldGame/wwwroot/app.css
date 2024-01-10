@@ -47,3 +47,11 @@ h1:focus {
     width: 35px;
     height: 35px;
 }
+
+.minefield-space-hidden {
+    background-color: dimgray;
+}
+
+.minefield-space-revealed {
+    background-color: lightgray;
+}

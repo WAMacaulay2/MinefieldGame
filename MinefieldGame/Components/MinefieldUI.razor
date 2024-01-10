@@ -8,7 +8,9 @@
             <div class="row">
                 @foreach (var cell in row)
                 {
-                    <div class="@($"col border minefield-space-{Minefield.Difficulty.ToString().ToLower()}")">
+                    <div class="@($"col border minefield-space-{Minefield.Difficulty.ToString().ToLower()} minefield-space-{(cell.Revealed ? "revealed" : "hidden")}")"
+                         @onclick="() => RevealSpace(cell)"
+                         @oncontextmenu="() => FlagSpace(cell)" @oncontextmenu:preventDefault>
                         @if(cell.Revealed)
                         {
                             @if (cell.HasMine)
@@ -43,5 +45,17 @@
         base.OnInitialized();
         Minefield = new Minefield(DifficultySetting);
         Minefield.SetMines();
+    }
+
+    private void RevealSpace(MinefieldSpace space)
+    {
+        space.Revealed = true;
+        Minefield.RevealSpaces();
+    }
+
+    private void FlagSpace(MinefieldSpace space)
+    {
+        if (!space.Revealed)
+            space.Flagged = !space.Flagged;
     }
 }

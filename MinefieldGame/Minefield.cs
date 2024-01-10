@@ -129,7 +129,6 @@
                 if (!cell.HasMine && !cell.Revealed)
                 {
                     cell.HasMine = true;
-                    cell.Revealed = true;// TODO: For debug, take this out eventually.
                     setMines++;
                 }
             }
@@ -173,6 +172,107 @@
             }
 
             Mined = true;
+        }
+
+        public void RevealSpaces()
+        {
+            bool again = true;
+            while(again)
+            {
+                again = false;
+                for(int i = 0; i < Rows; i++)
+                {
+                    for(int j = 0; j < Columns; j++)
+                    {
+                        var cell = Field[i][j];
+                        if(!cell.Revealed || cell.HasMine || cell.AdjacentMines > 0)
+                            continue;
+
+                        // Top-left space.
+                        if (i > 0 && j > 0)
+                        {
+                            var otherCell = Field[i - 1][j - 1];
+                            if (!otherCell.Revealed && !otherCell.HasMine)
+                            {
+                                otherCell.Revealed = true;
+                                again = true;
+                            }
+                        }
+                        // Top space.
+                        if (j > 0)
+                        {
+                            var otherCell = Field[i][j - 1];
+                            if (!otherCell.Revealed && !otherCell.HasMine)
+                            {
+                                otherCell.Revealed = true;
+                                again = true;
+                            }
+                        }
+                        // Top-right space.
+                        if (i < Rows - 1 && j > 0)
+                        {
+                            var otherCell = Field[i + 1][j - 1];
+                            if (!otherCell.Revealed && !otherCell.HasMine)
+                            {
+                                otherCell.Revealed = true;
+                                again = true;
+                            }
+                        }
+
+                        // Left space.
+                        if (i > 0)
+                        {
+                            var otherCell = Field[i - 1][j];
+                            if (!otherCell.Revealed && !otherCell.HasMine)
+                            {
+                                otherCell.Revealed = true;
+                                again = true;
+                            }
+                        }
+                        // Right space.
+                        if (i < Rows - 1)
+                        {
+                            var otherCell = Field[i + 1][j];
+                            if (!otherCell.Revealed && !otherCell.HasMine)
+                            {
+                                otherCell.Revealed = true;
+                                again = true;
+                            }
+                        }
+
+                        // Bottom-left space.
+                        if (i > 0 && j < Columns - 1)
+                        {
+                            var otherCell = Field[i - 1][j + 1];
+                            if (!otherCell.Revealed && !otherCell.HasMine)
+                            {
+                                otherCell.Revealed = true;
+                                again = true;
+                            }
+                        }
+                        // Bottom space.
+                        if (j < Columns - 1)
+                        {
+                            var otherCell = Field[i][j + 1];
+                            if (!otherCell.Revealed && !otherCell.HasMine)
+                            {
+                                otherCell.Revealed = true;
+                                again = true;
+                            }
+                        }
+                        // Bottom-right space.
+                        if (i < Rows - 1 && j < Columns - 1)
+                        {
+                            var otherCell = Field[i + 1][j + 1];
+                            if (!otherCell.Revealed && !otherCell.HasMine)
+                            {
+                                otherCell.Revealed = true;
+                                again = true;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
