@@ -2,7 +2,11 @@
 {
     <MudPaper Class="m-4 p-2">
         <MudToolBar>
-            <MudSelect T="Difficulty" Label="Difficulty" @bind-Value="@DifficultySetting" Variant="Variant.Outlined">
+            <MudTooltip Text="New Game">
+                <MudIconButton Class="me-4" OnClick="NewGame" Icon="@Icons.Material.Filled.Replay" Color="Color.Primary" Variant="Variant.Outlined" />
+            </MudTooltip>
+
+            <MudSelect T="Difficulty" Label="Difficulty" Value="@DifficultySetting" ValueChanged="OnDifficultyChanged" Variant="Variant.Outlined">
                 <MudSelectItem Value="@Difficulty.Easy" />
                 <MudSelectItem Value="@Difficulty.Medium" />
                 <MudSelectItem Value="@Difficulty.Hard" />
@@ -42,12 +46,6 @@
                     <text><MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" /> Sweep Complete!</text>
                 }
             </div>
-
-            <MudSpacer/>
-
-            <MudTooltip Text="New Game">
-                <MudIconButton OnClick="NewGame" Icon="@Icons.Material.Filled.Replay" Color="Color.Primary" Variant="Variant.Outlined" />
-            </MudTooltip>
         </MudToolBar>
     </MudPaper>
 
@@ -120,12 +118,18 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Minefield = new Minefield(DifficultySetting);
+        NewGame();
     }
 
     private void NewGame()
     {
         Minefield = new Minefield(DifficultySetting);
+    }
+
+    private void OnDifficultyChanged(Difficulty difficulty)
+    {
+        DifficultySetting = difficulty;
+        NewGame();
     }
 
     private void RevealSpace(int x, int y)
