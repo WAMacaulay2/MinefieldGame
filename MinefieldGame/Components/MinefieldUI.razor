@@ -1,14 +1,18 @@
 ﻿<h3>Minefield UI</h3>
 
-@if(Minefield != null)
+<div>
+
+</div>
+
+@if (Minefield != null)
 {
     <div class="container minefield">
-        @for(int i = 0; i < Minefield.Rows; i++)
+        @for (int i = 0; i < Minefield.Rows; i++)
         {
             var x = i;
 
             <div class="row">
-                @for(int j = 0; j < Minefield.Columns; j++)
+                @for (int j = 0; j < Minefield.Columns; j++)
                 {
                     var y = j;
                     var cell = Minefield.Field[x][y];
@@ -16,20 +20,27 @@
                     <div class="@($"col border minefield-space-{Minefield.Difficulty.ToString().ToLower()} minefield-space-{(cell.Revealed ? "revealed" : "hidden")}")"
                          @onclick="() => RevealSpace(x, y)"
                          @oncontextmenu="() => FlagSpace(x, y)" @oncontextmenu:preventDefault>
-                        @if(cell.Revealed)
+                        @if (cell.Revealed)
                         {
                             @if (cell.HasMine)
                             {
-                                <MudIcon Icon="@MineIcon"/>
+                                <MudIcon Icon="@ExplodedMineIcon"/>
                             }
-                            else if(cell.AdjacentMines > 0)
+                            else if (cell.AdjacentMines > 0)
                             {
                                 @cell.AdjacentMines
                             }
                         }
-                        else if(!cell.Revealed && cell.Flagged)
+                        else
                         {
-                            <MudIcon Icon="@FlagIcon"/>
+                            @if (cell.Flagged)
+                            {
+                                <MudIcon Icon="@FlagIcon"/>
+                            }
+                            else if (cell.HasMine && Minefield.GameOver)
+                            {
+                                <MudIcon Icon="@UnexplodedMineIcon"/>
+                            }
                         }
                     </div>
                 }
@@ -43,7 +54,8 @@
     private Minefield Minefield { get; set; }
 
     private readonly string FlagIcon = Icons.Material.Filled.Flag;
-    private readonly string MineIcon = Icons.Material.Filled.BrightnessLow;
+    private readonly string ExplodedMineIcon = Icons.Material.Filled.Brightness7;
+    private readonly string UnexplodedMineIcon = Icons.Material.Filled.Brightness1;
 
     protected override void OnInitialized()
     {

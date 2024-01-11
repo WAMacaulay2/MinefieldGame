@@ -7,6 +7,14 @@
         Hard
     }
 
+    public enum GameState
+    {
+        NewGame,
+        Playing,
+        Lost,
+        Won
+    }
+
     public class Minefield
     {
         private const int EASY_ROWS = 8;
@@ -23,7 +31,8 @@
 
         public MinefieldSpace[][] Field { get; set; }
         public Difficulty Difficulty { get; private set; }
-        public bool Mined { get; private set; }
+        public GameState State { get; private set; }
+        public bool GameOver { get => State > GameState.Playing; }
 
         public int Rows
         {
@@ -80,7 +89,7 @@
         public Minefield(Difficulty difficulty)
         {
             Difficulty = difficulty;
-            switch(difficulty)
+            switch (difficulty)
             {
                 case Difficulty.Easy:
                 default:
@@ -115,7 +124,7 @@
 
         public void SetMines()
         {
-            if (Mined)
+            if (State != GameState.NewGame)
                 return;
 
             if (HiddenSpaces < TotalMines)
@@ -124,7 +133,7 @@
             // Add all the mines.
             int setMines = 0;
             Random rng = new Random();
-            while(setMines < TotalMines)
+            while (setMines < TotalMines)
             {
                 int x = rng.Next(0, Rows - 1);
                 int y = rng.Next(0, Columns - 1);
@@ -139,12 +148,12 @@
             }
 
             // Set mine counts on empty spaces.
-            for(int i = 0; i < Rows; i++)
+            for (int i = 0; i < Rows; i++)
             {
-                for(int j = 0; j < Columns; j++)
+                for (int j = 0; j < Columns; j++)
                 {
                     var cell = Field[i][j];
-                    if(!cell.HasMine)
+                    if (!cell.HasMine)
                     {
                         // Top-left space.
                         if (i > 0 && j > 0 && Field[i - 1][j - 1].HasMine)
@@ -176,20 +185,24 @@
                 }
             }
 
-            Mined = true;
+            State = GameState.Playing;
         }
 
         public void RevealSpace(int x, int y)
         {
+            // Don't reveal space if game is over.
+            if (GameOver)
+                return;
+
             var startingCell = Field[x][y];
             // Don't reveal flagged spaces.
-            if(startingCell.Flagged)
+            if (startingCell.Flagged)
                 return;
 
             startingCell.Revealed = true;
 
             // Mine the field if it hasn't been mined yet.
-            if(!Mined)
+            if (State == GameState.NewGame)
             {
                 // Top-left space.
                 if (x > 0 && y > 0)
@@ -221,19 +234,27 @@
             }
             // No other spaces will be revealed if this isn't a blank space.
             else if (startingCell.HasMine || startingCell.AdjacentMines > 0)
+            {
+                // If user revealed a mine, they lose.
+                if (startingCell.HasMine)
+                    State = GameState.Lost;
+                // If the number of hidden spaces remaining equals hidden spaces, game is won.
+                else if (HiddenSpaces == TotalMines)
+                    State = GameState.Won;
                 return;
+            }
 
             // Reveal adjacent spaces.
             bool again = true;
-            while(again)
+            while (again)
             {
                 again = false;
-                for(int i = 0; i < Rows; i++)
+                for (int i = 0; i < Rows; i++)
                 {
-                    for(int j = 0; j < Columns; j++)
+                    for (int j = 0; j < Columns; j++)
                     {
                         var cell = Field[i][j];
-                        if(!cell.Revealed || cell.HasMine || cell.AdjacentMines > 0)
+                        if (!cell.Revealed || cell.HasMine || cell.AdjacentMines > 0)
                             continue;
 
                         // Top-left space.
@@ -321,10 +342,16 @@
                     }
                 }
             }
+
+            // If the number of hidden spaces remaining equals hidden spaces, game is won.
+            if (HiddenSpaces == TotalMines)
+                State = GameState.Won;
         }
 
         public void FlagSpace(int x, int y)
         {
+            if (GameOver)
+                return;
             var cell = Field[x][y];
             if (!cell.Revealed)
                 cell.Flagged = !cell.Flagged;
