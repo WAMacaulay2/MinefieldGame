@@ -1,6 +1,18 @@
 ﻿@inherits LayoutComponentBase
 
-@Body
+<MudThemeProvider />
+<MudDialogProvider />
+
+<MudLayout>
+    <MudAppBar>
+        <MudSpacer/>
+        <h1>Minefield</h1>
+        <MudSpacer/>
+    </MudAppBar>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.

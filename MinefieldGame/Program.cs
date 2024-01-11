@@ -1,4 +1,5 @@
 using MinefieldGame.Components;
+using MudBlazor.Services;
 
 namespace MinefieldGame
 {
@@ -11,6 +12,8 @@ namespace MinefieldGame
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+
+            builder.Services.AddMudServices();
 
             var app = builder.Build();
 

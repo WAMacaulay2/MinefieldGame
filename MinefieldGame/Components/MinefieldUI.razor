@@ -1,12 +1,57 @@
-﻿<h3>Minefield UI</h3>
-
-<div>
-
-</div>
-
-@if (Minefield != null)
+﻿@if (Minefield != null)
 {
-    <div class="container minefield">
+    <MudPaper Class="m-4 p-2">
+        <MudToolBar>
+            <MudSelect T="Difficulty" Label="Difficulty" @bind-Value="@DifficultySetting" Variant="Variant.Outlined">
+                <MudSelectItem Value="@Difficulty.Easy" />
+                <MudSelectItem Value="@Difficulty.Medium" />
+                <MudSelectItem Value="@Difficulty.Hard" />
+            </MudSelect>
+
+            <MudSpacer/>
+
+            <div class="border border-dark rounded p-2 flex-row">
+                <MudIcon Icon="@FlagIcon"/>
+                @Minefield.RemainingMines
+            </div>
+
+            <MudSpacer/>
+
+            <div class="border border-dark rounded p-2 flex-row">
+                <MudIcon Icon="@Icons.Material.Filled.Timer" />
+                @Minefield.TimeElapsed
+            </div>
+
+            <MudSpacer/>
+
+            <div>
+                @if (Minefield.State == GameState.NewGame)
+                {
+                    <text>Begin Sweep</text>
+                }
+                else if (Minefield.State == GameState.Playing)
+                {
+                    <text>Sweeping...</text>
+                }
+                else if (Minefield.State == GameState.Lost)
+                {
+                    <text><MudIcon Icon="@Icons.Material.Filled.Cancel" Color="Color.Error" /> Sweep Failed</text>
+                }
+                else
+                {
+                    <text><MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" /> Sweep Complete!</text>
+                }
+            </div>
+
+            <MudSpacer/>
+
+            <MudTooltip Text="New Game">
+                <MudIconButton OnClick="NewGame" Icon="@Icons.Material.Filled.Replay" Color="Color.Primary" Variant="Variant.Outlined" />
+            </MudTooltip>
+        </MudToolBar>
+    </MudPaper>
+
+    <div class="container mb-5 minefield">
         @for (int i = 0; i < Minefield.Rows; i++)
         {
             var x = i;
@@ -17,14 +62,14 @@
                     var y = j;
                     var cell = Minefield.Field[x][y];
 
-                    <div class="@($"col border minefield-space-{Minefield.Difficulty.ToString().ToLower()} minefield-space-{(cell.Revealed ? "revealed" : "hidden")}")"
+                    <div class="@($"col border minefield-space minefield-space-{Minefield.Difficulty.ToString().ToLower()} minefield-space-{(cell.Revealed ? "revealed" : "hidden")}")"
                          @onclick="() => RevealSpace(x, y)"
                          @oncontextmenu="() => FlagSpace(x, y)" @oncontextmenu:preventDefault>
                         @if (cell.Revealed)
                         {
                             @if (cell.HasMine)
                             {
-                                <MudIcon Icon="@ExplodedMineIcon"/>
+                                <MudIcon Icon="@ExplodedMineIcon" Style="color:orangered"/>
                             }
                             else if (cell.AdjacentMines > 0)
                             {
@@ -35,11 +80,25 @@
                         {
                             @if (cell.Flagged)
                             {
-                                <MudIcon Icon="@FlagIcon"/>
+                                @if (Minefield.GameOver)
+                                {
+                                    @if (cell.HasMine)
+                                    {
+                                        <MudIcon Icon="@FlaggedMineIcon" Style="color:red" />
+                                    }
+                                    else
+                                    {
+                                        <MudIcon Icon="@FlagIcon" Style="color:black" />
+                                    }
+                                }
+                                else
+                                {
+                                    <MudIcon Icon="@FlagIcon" Style="color:red" />
+                                }
                             }
                             else if (cell.HasMine && Minefield.GameOver)
                             {
-                                <MudIcon Icon="@UnexplodedMineIcon"/>
+                                <MudIcon Icon="@UnexplodedMineIcon" Style="color:black"/>
                             }
                         }
                     </div>
@@ -54,12 +113,18 @@
     private Minefield Minefield { get; set; }
 
     private readonly string FlagIcon = Icons.Material.Filled.Flag;
+    private readonly string FlaggedMineIcon = Icons.Material.Filled.FlagCircle;
     private readonly string ExplodedMineIcon = Icons.Material.Filled.Brightness7;
     private readonly string UnexplodedMineIcon = Icons.Material.Filled.Brightness1;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        Minefield = new Minefield(DifficultySetting);
+    }
+
+    private void NewGame()
+    {
         Minefield = new Minefield(DifficultySetting);
     }
 

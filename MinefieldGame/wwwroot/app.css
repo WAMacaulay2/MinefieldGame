@@ -33,17 +33,26 @@ h1:focus {
     min-height:560px;
 }
 
+.minefield-space {
+    padding: 0px;
+    text-align: center;
+}
+
 .minefield-space-easy {
-    width:70px;
-    height:70px;
+    line-height: 70px;
+    font-size: 2em;
+    width: 70px;
+    height: 70px;
 }
 
 .minefield-space-medium {
+    line-height: 35px;
     width: 35px;
     height: 35px;
 }
 
 .minefield-space-hard {
+    line-height: 35px;
     width: 35px;
     height: 35px;
 }

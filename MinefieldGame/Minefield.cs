@@ -32,6 +32,7 @@
         public MinefieldSpace[][] Field { get; set; }
         public Difficulty Difficulty { get; private set; }
         public GameState State { get; private set; }
+        public int TimeElapsed { get; set; }
         public bool GameOver { get => State > GameState.Playing; }
 
         public int Rows
