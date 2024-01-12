@@ -52,17 +52,21 @@
     <div class="container mb-5 minefield">
         @for (int i = 0; i < Minefield.Rows; i++)
         {
-            var x = i;
+            var y = i;
 
             <div class="row">
                 @for (int j = 0; j < Minefield.Columns; j++)
                 {
-                    var y = j;
+                    var x = j;
                     var cell = Minefield.Field[x][y];
 
-                    <div class="@($"col border minefield-space minefield-space-{Minefield.Difficulty.ToString().ToLower()} minefield-space-{(cell.Revealed ? "revealed" : "hidden")}")"
+                    <div class="@($"col border-2 minefield-space minefield-space-{Minefield.Difficulty.ToString().ToLower()} minefield-space-{(cell.Revealed ? "revealed" : "hidden")}")"
                          @onclick="() => RevealSpace(x, y)"
-                         @oncontextmenu="() => FlagSpace(x, y)" @oncontextmenu:preventDefault>
+                         @oncontextmenu="() => FlagSpace(x, y)" @oncontextmenu:preventDefault
+                         style="@($"border-color: {(HoveredY - 1 == y && HoveredX - 1 <= x && x <= HoveredX + 1 ? "blue" : "white")} "
+                                  + $"{(HoveredX + 1 == x && HoveredY - 1 <= y && y <= HoveredY + 1 ? "blue" : "white")} "
+                                  + $"{(HoveredY + 1 == y && HoveredX - 1 <= x && x <= HoveredX + 1 ? "blue" : "white")} "
+                                  + $"{(HoveredX - 1 == x && HoveredY - 1 <= y && y <= HoveredY + 1 ? "blue" : "white")} !important")">
                         @if (cell.Revealed)
                         {
                             @if (cell.HasMine)
@@ -109,6 +113,8 @@
 @code {
     private Difficulty DifficultySetting { get; set; }
     private Minefield Minefield { get; set; }
+    private int HoveredX { get; set; } = -10;
+    private int HoveredY { get; set; } = -10;
     private System.Threading.Timer Timer { get; set; }
 
     private readonly string FlagIcon = Icons.Material.Filled.Flag;
@@ -147,7 +153,18 @@
 
     private void RevealSpace(int x, int y)
     {
-        Minefield.RevealSpace(x, y);
+        var cell = Minefield.Field[x][y];
+        if (cell.Revealed && cell.AdjacentMines > 0)
+        {
+            HoveredX = x;
+            HoveredY = y;
+        }
+        else
+        {
+            HoveredX = -10;
+            HoveredY = -10;
+            Minefield.RevealSpace(x, y);
+        }
     }
 
     private void FlagSpace(int x, int y)
