@@ -109,6 +109,7 @@
 @code {
     private Difficulty DifficultySetting { get; set; }
     private Minefield Minefield { get; set; }
+    private System.Threading.Timer Timer { get; set; }
 
     private readonly string FlagIcon = Icons.Material.Filled.Flag;
     private readonly string FlaggedMineIcon = Icons.Material.Filled.FlagCircle;
@@ -124,6 +125,18 @@
     private void NewGame()
     {
         Minefield = new Minefield(DifficultySetting);
+        // Get rid of the old timer.
+        if (Timer != null)
+            Timer.Dispose();
+        // Get a new timer ready.
+        Timer = new System.Threading.Timer(async obj =>
+        {
+            if (Minefield != null && Minefield.State == GameState.Playing)
+            {
+                Minefield.TimeElapsed++;
+                await InvokeAsync(StateHasChanged);
+            }
+        }, new AutoResetEvent(true), 1000, 1000);
     }
 
     private void OnDifficultyChanged(Difficulty difficulty)
