@@ -52,22 +52,22 @@
     <div class="container mb-5 minefield">
         @for (int i = 0; i < Minefield.Rows; i++)
         {
-            var y = i;
+            var x = i;
 
             <div class="row">
                 @for (int j = 0; j < Minefield.Columns; j++)
                 {
-                    var x = j;
+                    var y = j;
                     var cell = Minefield.Field[x][y];
 
                     <div class="@($"col border-2 minefield-space minefield-space-{Minefield.Difficulty.ToString().ToLower()} "
                                 + $"minefield-space-{(cell.Revealed ? "revealed" : "hidden")}{(HighlightX <= x + 1 && HighlightX >= x - 1 && HighlightY <= y + 1 && HighlightY >= y - 1 ? "-highlight" : "")}")"
                          @onclick="@(() => RevealOrHighlightSpace(x, y))"
                          @oncontextmenu="@(() => FlagOrHighlightSpace(x, y))" @oncontextmenu:preventDefault
-                         style="@($"border-color: {(HighlightY - 1 == y && HighlightX - 1 <= x && x <= HighlightX + 1 ? "blue" : "white")} "
-                                  + $"{(HighlightX + 1 == x && HighlightY - 1 <= y && y <= HighlightY + 1 ? "blue" : "white")} "
+                         style="@($"border-color: {(HighlightX - 1 == x && HighlightY - 1 <= y && y <= HighlightY + 1 ? "blue" : "white")} "
                                   + $"{(HighlightY + 1 == y && HighlightX - 1 <= x && x <= HighlightX + 1 ? "blue" : "white")} "
-                                  + $"{(HighlightX - 1 == x && HighlightY - 1 <= y && y <= HighlightY + 1 ? "blue" : "white")} !important")">
+                                  + $"{(HighlightX + 1 == x && HighlightY - 1 <= y && y <= HighlightY + 1 ? "blue" : "white")} "
+                                  + $"{(HighlightY - 1 == y && HighlightX - 1 <= x && x <= HighlightX + 1 ? "blue" : "white")} !important")">
                         <div class="minefield-space-container">
                             @if(cell.AdjacentMines > 0 && cell.Revealed)
                             {
