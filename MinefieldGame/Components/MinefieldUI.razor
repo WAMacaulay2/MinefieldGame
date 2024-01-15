@@ -67,42 +67,51 @@
                                   + $"{(HighlightX + 1 == x && HighlightY - 1 <= y && y <= HighlightY + 1 ? "blue" : "white")} "
                                   + $"{(HighlightY + 1 == y && HighlightX - 1 <= x && x <= HighlightX + 1 ? "blue" : "white")} "
                                   + $"{(HighlightX - 1 == x && HighlightY - 1 <= y && y <= HighlightY + 1 ? "blue" : "white")} !important")">
-                        @if (cell.Revealed)
-                        {
-                            @if (cell.HasMine)
+                        <div class="minefield-space-container">
+                            @if(cell.AdjacentMines > 0 && cell.Revealed)
                             {
-                                <MudIcon Icon="@ExplodedMineIcon" Style="color:orangered"/>
+                                <div class="minefield-space-meter" style="height: 50%;"></div>
                             }
-                            else if (cell.AdjacentMines > 0)
-                            {
-                                @cell.AdjacentMines
-                            }
-                        }
-                        else
-                        {
-                            @if (cell.Flagged)
-                            {
-                                @if (Minefield.GameOver)
+
+                            <div class="minefield-space-icon">
+                                @if (cell.Revealed)
                                 {
                                     @if (cell.HasMine)
                                     {
-                                        <MudIcon Icon="@FlaggedMineIcon" Style="color:red" />
+                                        <MudIcon Icon="@ExplodedMineIcon" Style="color:orangered" />
                                     }
-                                    else
+                                    else if (cell.AdjacentMines > 0)
                                     {
-                                        <MudIcon Icon="@FlagIcon" Style="color:black" />
+                                        @cell.AdjacentMines
                                     }
                                 }
                                 else
                                 {
-                                    <MudIcon Icon="@FlagIcon" Style="color:red" />
+                                    @if (cell.Flagged)
+                                    {
+                                        @if (Minefield.GameOver)
+                                        {
+                                            @if (cell.HasMine)
+                                            {
+                                                <MudIcon Icon="@FlaggedMineIcon" Style="color:red" />
+                                            }
+                                            else
+                                            {
+                                                <MudIcon Icon="@FlagIcon" Style="color:black" />
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <MudIcon Icon="@FlagIcon" Style="color:red" />
+                                        }
+                                    }
+                                    else if (cell.HasMine && Minefield.GameOver)
+                                    {
+                                        <MudIcon Icon="@UnexplodedMineIcon" Style="color:black" />
+                                    }
                                 }
-                            }
-                            else if (cell.HasMine && Minefield.GameOver)
-                            {
-                                <MudIcon Icon="@UnexplodedMineIcon" Style="color:black"/>
-                            }
-                        }
+                            </div>
+                        </div>
                     </div>
                 }
             </div>
