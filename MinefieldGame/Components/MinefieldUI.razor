@@ -61,7 +61,7 @@
                     var cell = Minefield.Field[x][y];
 
                     <div class="@($"col border-2 minefield-space minefield-space-{Minefield.Difficulty.ToString().ToLower()} "
-                                + $"minefield-space-{(cell.Revealed ? "revealed" : "hidden")}{(HighlightX <= x + 1 && HighlightX >= x - 1 && HighlightY <= y + 1 && HighlightY >= y - 1 ? "-highlight" : "")}{(HighlightX == x && HighlightY == y ? "-center" : "")}")"
+                                + $"minefield-space-{(cell.Revealed ? "revealed" : "hidden")}{(HighlightX <= x + 1 && HighlightX >= x - 1 && HighlightY <= y + 1 && HighlightY >= y - 1 ? "-highlight" : "")}")"
                          @onclick="@(() => RevealOrHighlightSpace(x, y))"
                          @oncontextmenu="@(() => FlagOrHighlightSpace(x, y))" @oncontextmenu:preventDefault
                          style="@($"border-color: {(HighlightY - 1 == y && HighlightX - 1 <= x && x <= HighlightX + 1 ? "blue" : "white")} "
@@ -119,6 +119,11 @@
         }
     </div>
 }
+<div class="text-center mb-5">
+    <div>Left-click hidden space to reveal.</div>
+    <div>Right-click hidden space to place/remove flag.</div>
+    <div>Click a numbered space to highlight surrounding spaces.</div>
+</div>
 
 @code {
     private Difficulty DifficultySetting { get; set; }

@@ -87,14 +87,10 @@ h1:focus {
     background-color: lightgray;
 }
 
-.minefield-space-revealed-highlight-center {
-    background-color: steelblue;
-}
-
 .minefield-space-revealed-highlight {
     background-color: skyblue;
 }
 
 .minefield-space-hidden-highlight {
-    background-color: darkslateblue;
+    background-color: steelblue;
 }
