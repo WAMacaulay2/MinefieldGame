@@ -49,6 +49,10 @@ h1:focus {
     width: 100%;
 }
 
+.minefield-space-icon-overflagged {
+    color: red;
+}
+
 .minefield-space-meter {
     position: absolute;
     bottom: 0;

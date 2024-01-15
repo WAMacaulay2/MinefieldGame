@@ -60,7 +60,8 @@
                     var x = j;
                     var cell = Minefield.Field[x][y];
 
-                    <div class="@($"col border-2 minefield-space minefield-space-{Minefield.Difficulty.ToString().ToLower()} minefield-space-{(cell.Revealed ? "revealed" : "hidden")}{(HighlightX <= x + 1 && HighlightX >= x - 1 && HighlightY <= y + 1 && HighlightY >= y - 1 ? "-highlight" : "")}{(HighlightX == x && HighlightY == y ? "-center" : "")}")"
+                    <div class="@($"col border-2 minefield-space minefield-space-{Minefield.Difficulty.ToString().ToLower()} "
+                                + $"minefield-space-{(cell.Revealed ? "revealed" : "hidden")}{(HighlightX <= x + 1 && HighlightX >= x - 1 && HighlightY <= y + 1 && HighlightY >= y - 1 ? "-highlight" : "")}{(HighlightX == x && HighlightY == y ? "-center" : "")}")"
                          @onclick="@(() => RevealOrHighlightSpace(x, y))"
                          @oncontextmenu="@(() => FlagOrHighlightSpace(x, y))" @oncontextmenu:preventDefault
                          style="@($"border-color: {(HighlightY - 1 == y && HighlightX - 1 <= x && x <= HighlightX + 1 ? "blue" : "white")} "
@@ -73,7 +74,7 @@
                                 <div class="minefield-space-meter" style="@($"height: {100 * (cell.AdjacentMines - Minefield.GetFlaggedSpacesAround(x, y)) / cell.AdjacentMines}%;")"></div>
                             }
 
-                            <div class="minefield-space-icon">
+                            <div class="@($"minefield-space-icon {(cell.Revealed && cell.AdjacentMines > 0 && Minefield.GetFlaggedSpacesAround(x, y) > cell.AdjacentMines ? "minefield-space-icon-overflagged" : "")}")">
                                 @if (cell.Revealed)
                                 {
                                     @if (cell.HasMine)
