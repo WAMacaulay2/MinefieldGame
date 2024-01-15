@@ -357,6 +357,40 @@
             if (!cell.Revealed)
                 cell.Flagged = !cell.Flagged;
         }
+
+        public int GetFlaggedSpacesAround(int x, int y)
+        {
+            int result = 0;
+
+            // Top-left space.
+            if (x > 0 && y > 0)
+                result += Field[x - 1][y - 1].Flagged ? 1 : 0;
+            // Top space.
+            if (y > 0)
+                result += Field[x][y - 1].Flagged ? 1 : 0;
+            // Top-right space.
+            if (x < Rows - 1 && y > 0)
+                result += Field[x + 1][y - 1].Flagged ? 1 : 0;
+
+            // Left space.
+            if (x > 0)
+                result += Field[x - 1][y].Flagged ? 1 : 0;
+            // Right space.
+            if (x < Rows - 1)
+                result += Field[x + 1][y].Flagged ? 1 : 0;
+
+            // Bottom-left space.
+            if (x > 0 && y < Columns - 1)
+                result += Field[x - 1][y + 1].Flagged ? 1 : 0;
+            // Bottom space.
+            if (y < Columns - 1)
+                result += Field[x][y + 1].Flagged ? 1 : 0;
+            // Bottom-right space.
+            if (x < Rows - 1 && y < Columns - 1)
+                result += Field[x + 1][y + 1].Flagged ? 1 : 0;
+
+            return result;
+        }
     }
 
     public class MinefieldSpace

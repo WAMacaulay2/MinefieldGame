@@ -62,7 +62,7 @@
 
                     <div class="@($"col border-2 minefield-space minefield-space-{Minefield.Difficulty.ToString().ToLower()} minefield-space-{(cell.Revealed ? "revealed" : "hidden")}{(HighlightX <= x + 1 && HighlightX >= x - 1 && HighlightY <= y + 1 && HighlightY >= y - 1 ? "-highlight" : "")}{(HighlightX == x && HighlightY == y ? "-center" : "")}")"
                          @onclick="@(() => RevealOrHighlightSpace(x, y))"
-                         @oncontextmenu="@(() => FlagSpace(x, y))" @oncontextmenu:preventDefault
+                         @oncontextmenu="@(() => FlagOrHighlightSpace(x, y))" @oncontextmenu:preventDefault
                          style="@($"border-color: {(HighlightY - 1 == y && HighlightX - 1 <= x && x <= HighlightX + 1 ? "blue" : "white")} "
                                   + $"{(HighlightX + 1 == x && HighlightY - 1 <= y && y <= HighlightY + 1 ? "blue" : "white")} "
                                   + $"{(HighlightY + 1 == y && HighlightX - 1 <= x && x <= HighlightX + 1 ? "blue" : "white")} "
@@ -70,7 +70,7 @@
                         <div class="minefield-space-container">
                             @if(cell.AdjacentMines > 0 && cell.Revealed)
                             {
-                                <div class="minefield-space-meter" style="height: 50%;"></div>
+                                <div class="minefield-space-meter" style="@($"height: {100 * (cell.AdjacentMines - Minefield.GetFlaggedSpacesAround(x, y)) / cell.AdjacentMines}%;")"></div>
                             }
 
                             <div class="minefield-space-icon">
@@ -176,8 +176,15 @@
         }
     }
 
-    private void FlagSpace(int x, int y)
+    private void FlagOrHighlightSpace(int x, int y)
     {
-        Minefield.FlagSpace(x, y);
+        var cell = Minefield.Field[x][y];
+        if (cell.Revealed && cell.AdjacentMines > 0 && (HighlightX != x || HighlightY != y))
+        {
+            HighlightX = x;
+            HighlightY = y;
+        }
+        else
+            Minefield.FlagSpace(x, y);
     }
 }
