@@ -64,3 +64,15 @@ h1:focus {
 .minefield-space-revealed {
     background-color: lightgray;
 }
+
+.minefield-space-revealed-highlight-center {
+    background-color: steelblue;
+}
+
+.minefield-space-revealed-highlight {
+    background-color: skyblue;
+}
+
+.minefield-space-hidden-highlight {
+    background-color: darkslateblue;
+}
